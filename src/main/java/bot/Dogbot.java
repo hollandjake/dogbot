@@ -7,8 +7,6 @@ import bot.utils.exceptions.MissingConfigurationsException;
 import java.util.HashMap;
 import java.util.List;
 
-import static bot.utils.CONSTANTS.REPOSITORY;
-
 public class Dogbot extends Chatbot {
 
     //region Overrides
@@ -27,8 +25,12 @@ public class Dogbot extends Chatbot {
         //Overrides
         modules.put("Commands", new OneLinkCommand(this,
                 List.of("commands", "help"),
-                "https://github.com/hollandjake/Chatbot/blob/master/src/main/java/bot/dogbot/README.md",
+                "https://github.com/hollandjake/Dogbot",
                 "A list of commands can be found at"));
+        modules.put("Github", new OneLinkCommand(this,
+                List.of("github", "repo"),
+                "https://github.com/hollandjake/Dogbot",
+                "Github repository"));
 
         //Image responses
         modules.put("Birds", new Birds(this));
@@ -70,7 +72,7 @@ public class Dogbot extends Chatbot {
             new Dogbot(config);
         } catch (MissingConfigurationsException e) {
             e.printStackTrace();
-            GithubController.createIssue(REPOSITORY, config, e);
+            GithubController.createIssue("hollandjake/Dogbot", config, e);
             System.exit(1);
         }
     }
