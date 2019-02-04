@@ -131,7 +131,7 @@ public class Quotes implements CommandModule, DatabaseModule {
             return false;
         } else {
             saveQuote(chatbot.getThreadId(), message);
-            chatbot.sendImageWithMessage(message.getImageUrl(), "Grabbed" + (message.getMessage().length() > 0 ? " \"" + message.getMessage() + "\"" : ""));
+			chatbot.sendImageWithMessage(message.getImageUrl(), "Grabbed" + (message.getMessage().length() > 0 ? " \"" + message.getMessage() + "\"" : "") + "-" + message.getSender().getName());
             return true;
         }
     }
