@@ -36,6 +36,7 @@ public class Dogbot extends Chatbot {
         modules.put("Birds", new Birds(this));
         modules.put("Cats", new Cats(this));
         modules.put("Dogs", new Dogs(this));
+        modules.put("Dirk", new Dirk(this));
         modules.put("Inspire", new Inspire(this));
         modules.put("Memes", new Memes(this));
         modules.put("Reacts", new Reacts(this));
