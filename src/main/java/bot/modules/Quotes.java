@@ -259,7 +259,7 @@ public class Quotes implements CommandModule, DatabaseModule {
         } else if (match.equals(GRAB_OFFSET_REGEX)) {
             Matcher matcher = Pattern.compile(GRAB_OFFSET_REGEX).matcher(message.getMessage());
             if (matcher.find()) {
-                grab(message, Integer.parseInt(matcher.group(1)));
+				grab(message, Integer.parseInt(matcher.group(1)) + 1);
                 return true;
             } else {
                 throw new MalformedCommandException();
