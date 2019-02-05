@@ -25,7 +25,7 @@
         <dependency>
             <groupId>com.github.hollandjake</groupId>
             <artifactId>Chatbot</artifactId>
-            <version>c0e0d8397b</version>
+            <version>master-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
