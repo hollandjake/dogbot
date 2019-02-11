@@ -12,7 +12,7 @@ Inherited commands
 | Command | Response |
 | ------- | -------- |
 | `!commands` or `!help` | Links to this readme |
-| `!github` or `!repo` | Links to [this](https://github.com/hollandjake/Chatbot) github repository |
+| `!github` or `!repo` | Links to [this](https://github.com/hollandjake/Dogbot) github repository |
 | `!ping` | Checks if bot is active |
 | `!shutdown [code]` | shuts the bot down. The code is output at boot for the bot |
 | `!stats` | Outputs information about the bots configuration |
@@ -45,6 +45,8 @@ Message responses
 | `!quote` | Returns a random grabbed message |
 | `!QUOTE` | Returns a random grabbed message but in uppercase |
 | `!QuOtE` | Returns a random grabbed message but in shakey case |
+| `!story` | Returns a story made of 5 random grabbed messages |
+| `!story [num]` | Returns a story made of [num] random grabbed messages |
 | `!quotecount` | Returns number of quotes for the current thread |
 | `!quotecount [name]` | Returns number of quotes from a user in this thread |
 | `!reddits` | Outputs list of reddits being used |
