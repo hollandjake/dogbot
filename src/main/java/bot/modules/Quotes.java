@@ -271,7 +271,7 @@ public class Quotes implements CommandModule, DatabaseModule {
 			} catch (NumberFormatException e) {
 				throw new MalformedCommandException();
 			}
-			if (n > 100) {
+			if (n > 15) {
 				chatbot.sendMessage("I can't kill " + n + " trees for me to make that story, sorry");
 			} else {
 				ArrayList<Message> messages = new ArrayList<>();
@@ -284,7 +284,7 @@ public class Quotes implements CommandModule, DatabaseModule {
 				);
 				while (messages.size() < n) {
 					long curr = System.currentTimeMillis();
-					if (curr - now > 10000) {
+					if (curr - now > 5000) {
 						chatbot.sendMessage(GET_RANDOM(lateMessages));
 						now = curr;
 					}
