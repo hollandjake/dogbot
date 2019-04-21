@@ -5,3 +5,5 @@ src/errors/
 *.iml
 
 *loginDetails
+**/Messages/
+**/*.properties

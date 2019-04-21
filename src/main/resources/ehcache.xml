@@ -1,0 +1,112 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.ehcache.org/v3"
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd">
+
+    <cache alias="humans">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti unit="days">1</tti>
+        </expiry>
+
+        <resources>
+            <heap>10000</heap>
+        </resources>
+    </cache>
+
+    <cache alias="images">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti unit="days">1</tti>
+        </expiry>
+
+        <resources>
+            <heap>10000</heap>
+        </resources>
+    </cache>
+
+    <cache alias="message_components">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti unit="days">1</tti>
+        </expiry>
+
+        <resources>
+            <heap>10000</heap>
+        </resources>
+    </cache>
+
+    <cache alias="messages">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti unit="days">1</tti>
+        </expiry>
+
+        <resources>
+            <heap>100</heap>
+        </resources>
+    </cache>
+
+    <cache alias="latest_messages">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti unit="days">1</tti>
+        </expiry>
+
+        <resources>
+            <heap>1</heap>
+        </resources>
+    </cache>
+
+    <cache alias="modules">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti unit="days">1</tti>
+        </expiry>
+
+        <resources>
+            <heap>100</heap>
+        </resources>
+    </cache>
+
+    <cache alias="text">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti unit="days">1</tti>
+        </expiry>
+
+        <resources>
+            <heap>10000</heap>
+        </resources>
+    </cache>
+
+    <cache alias="threads">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti unit="days">1</tti>
+        </expiry>
+
+        <resources>
+            <heap>100</heap>
+        </resources>
+    </cache>
+
+    <cache alias="subreddits">
+        <key-type>java.lang.Object</key-type>
+        <value-type>java.lang.Object</value-type>
+        <expiry>
+            <tti unit="days">1</tti>
+        </expiry>
+
+        <resources>
+            <heap>1000</heap>
+        </resources>
+    </cache>
+</config>
