@@ -4,4 +4,8 @@ src/errors/
 
 *.iml
 
-*loginDetails
+**/*.properties
+!**/config.properties
+*.json
+src/test/Resources/Messages/**
+src/test/Quotes/*

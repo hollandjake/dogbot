@@ -1,8 +1,6 @@
-Dogbot
-======
+# Dogbot [![Release](https://jitpack.io/v/hollandjake/dogbot.svg)](https://jitpack.io/#hollandjake/dogbot) [![](https://jitci.com/gh/hollandjake/dogbot/svg)](https://jitci.com/gh/hollandjake/dogbot)
 
-This is an implementation of [Chatbot](https://github.com/hollandjake/Chatbot)
-which has been created for the use in the Computer Science Chat at The University Of Sheffield.
+Facebook messenger group chat bot for the Department of Computer Science students at the University Of Sheffield. Expands upon the [Chatbot](https://github.com/hollandjake/chatbot) system.
 
 Commands
 ========
@@ -12,7 +10,7 @@ Inherited commands
 | Command | Response |
 | ------- | -------- |
 | `!commands` or `!help` | Links to this readme |
-| `!github` or `!repo` | Links to [this](https://github.com/hollandjake/Dogbot) github repository |
+| `!github` or `!repo` | Links to [this](https://github.com/hollandjake/dogbot) github repository |
 | `!ping` | Checks if bot is active |
 | `!shutdown [code]` | shuts the bot down. The code is output at boot for the bot |
 | `!stats` | Outputs information about the bots configuration |
@@ -25,7 +23,7 @@ Image responses
 | `!bird` or `!birb` | Sends a picture of a bird |
 | `!cat` | Sends a picture of a cat |
 | `!dog` | Sends a picture of a dog |
-| `!extragooddog` | Send a picture of a dog from a curated list |
+| `!extragooddog` or `!egd` | Send a picture of a dog from a curated list |
 | `!inspire` | Sends an inspirational quote from [InspiroBot](http://inspirobot.me) |
 | `!react` or `!reac` or `!reac[as many c's]`| Gives the cats reaction |
 | `!tab` | Summons the tabulance to make things better |
@@ -38,6 +36,7 @@ Message responses
 | Command | Response |
 | ------- | -------- |
 | `!ask [message]` or `!8ball [message]` | Query the all knowing magic 8 ball |
+| `!dirk` | Send a picture of our lord and saviour |
 | `!feedback` | Sends a link to the group [Feedback form](https://docs.google.com/document/d/19Vquu0fh8LCqUXH0wwpm9H9MSq1LrEx1Z2Xg9NknKmg/edit?usp=sharing) |
 | `!grab` | Grabs the previous message |
 | `!grab [num]` | Grabs the message [num] behind. `!grab 1` is equal to `!grab` |
@@ -45,8 +44,6 @@ Message responses
 | `!quote` | Returns a random grabbed message |
 | `!QUOTE` | Returns a random grabbed message but in uppercase |
 | `!QuOtE` | Returns a random grabbed message but in shakey case |
-| `!story` | Returns a story made of 5 random grabbed messages |
-| `!story [num]` | Returns a story made of [num] random grabbed messages |
 | `!quotecount` | Returns number of quotes for the current thread |
 | `!quotecount [name]` | Returns number of quotes from a user in this thread |
 | `!reddits` | Outputs list of reddits being used |
