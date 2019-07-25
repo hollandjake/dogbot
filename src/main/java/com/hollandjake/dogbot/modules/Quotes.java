@@ -28,9 +28,9 @@ public class Quotes extends DatabaseCommandModule {
 
 	private PreparedStatement SAVE_QUOTE;
 	private PreparedStatement GET_RAND_QUOTE;
-	private PreparedStatement GET_RAND_QUOTE_WITH_NAME;
+	private PreparedStatement GET_RAND_QUOTE_WITH_HUMAN_ID;
 	private PreparedStatement GET_NUM_QUOTES;
-	private PreparedStatement GET_NUM_QUOTES_WITH_NAME;
+	private PreparedStatement GET_NUM_QUOTES_WITH_HUMAN_ID;
 	private PreparedStatement ALREADY_QUOTED;
 	private PreparedStatement GET_MESSAGE_SIMILAR_TO;
 
@@ -38,7 +38,7 @@ public class Quotes extends DatabaseCommandModule {
 		super(chatbot);
 	}
 
-	private void grab(Message commandMessage, int offset) {
+	private void grab(Message commandMessage, int offset) throws SQLException {
 		int targetId = commandMessage.getId() - offset;
 		Message targetMessage = db.getMessage(targetId);
 		if (targetMessage == null) {
@@ -159,19 +159,24 @@ public class Quotes extends DatabaseCommandModule {
 
 	private void quoteCount(String query) {
 		try {
-			GET_NUM_QUOTES_WITH_NAME.setInt(1, chatbot.getThread().getId());
-			GET_NUM_QUOTES_WITH_NAME.setString(2, query);
-			ResultSet resultSet = GET_NUM_QUOTES_WITH_NAME.executeQuery();
-			String name = query;
-			if (resultSet.next()) {
-				name = resultSet.getString(1);
-				int count = resultSet.getInt(2);
-				if (count > 0) {
-					chatbot.sendMessage("\"" + name + "\" has " + count + " quote" + (count != 1 ? "s" : "") + "! :O");
-					return;
+			db.checkConnection();
+			Integer humanId = db.getHumanIdWithNameLike(query);
+			if (humanId != null) {
+				GET_NUM_QUOTES_WITH_HUMAN_ID.setInt(1, chatbot.getThread().getId());
+				GET_NUM_QUOTES_WITH_HUMAN_ID.setInt(2, humanId);
+				ResultSet resultSet = GET_NUM_QUOTES_WITH_HUMAN_ID.executeQuery();
+				if (resultSet.next()) {
+					query = resultSet.getString(1);
+					int count = resultSet.getInt(2);
+					if (count > 0) {
+						chatbot.sendMessage("\"" + query + "\" has " + count + " quote" + (count != 1 ? "s" : "") + "! :O");
+					}
+				} else {
+					chatbot.sendMessage("\"" + query + "\" has 0 quotes! :'(");
 				}
+			} else {
+				chatbot.sendMessage("I'm sorry I don't know who '" + query + "' is");
 			}
-			chatbot.sendMessage("\"" + name + "\" has 0 quotes! :'(");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -233,11 +238,14 @@ public class Quotes extends DatabaseCommandModule {
 	private Message getRandomQuoteFromName(String name) {
 		try {
 			db.checkConnection();
-			GET_RAND_QUOTE_WITH_NAME.setInt(1, chatbot.getThread().getId());
-			GET_RAND_QUOTE_WITH_NAME.setString(2, name);
-			ResultSet resultSet = GET_RAND_QUOTE_WITH_NAME.executeQuery();
-			if (resultSet.next()) {
-				return db.getMessage(resultSet.getInt("message_id"));
+			Integer humanId = db.getHumanIdWithNameLike(name);
+			if (humanId != null) {
+				GET_RAND_QUOTE_WITH_HUMAN_ID.setInt(1, chatbot.getThread().getId());
+				GET_RAND_QUOTE_WITH_HUMAN_ID.setInt(2, humanId);
+				ResultSet resultSet = GET_RAND_QUOTE_WITH_HUMAN_ID.executeQuery();
+				if (resultSet.next()) {
+					return db.getMessage(resultSet.getInt("message_id"));
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -256,15 +264,14 @@ public class Quotes extends DatabaseCommandModule {
 				"WHERE thread_id = ? " +
 				"ORDER BY RAND() " +
 				"LIMIT 1");
-		GET_RAND_QUOTE_WITH_NAME = connection.prepareStatement("" +
+		GET_RAND_QUOTE_WITH_HUMAN_ID = connection.prepareStatement("" +
 				"SELECT" +
 				"   m.thread_id," +
 				"   m.message_id " +
 				"FROM quote " +
 				"JOIN message m on quote.message_id = m.message_id AND quote.thread_id = m.thread_id " +
-				"JOIN human h on m.sender_id = h.human_id " +
 				"WHERE m.thread_id = ? " +
-				"AND h.name COLLATE UTF8MB4_GENERAL_CI LIKE CONCAT('%',?,'%') " +
+				"AND sender_id = ? " +
 				"ORDER BY RAND() " +
 				"LIMIT 1");
 		GET_NUM_QUOTES = connection.prepareStatement("" +
@@ -272,7 +279,7 @@ public class Quotes extends DatabaseCommandModule {
 				"   COUNT(*) " +
 				"FROM quote " +
 				"WHERE thread_id = ?");
-		GET_NUM_QUOTES_WITH_NAME = connection.prepareStatement("" +
+		GET_NUM_QUOTES_WITH_HUMAN_ID = connection.prepareStatement("" +
 				"SELECT" +
 				"   h.name," +
 				"   COUNT(*)" +
@@ -280,7 +287,7 @@ public class Quotes extends DatabaseCommandModule {
 				"JOIN message m on quote.message_id = m.message_id AND quote.thread_id = m.thread_id " +
 				"JOIN human h on m.sender_id = h.human_id " +
 				"WHERE m.thread_id = ? " +
-				"AND h.name COLLATE UTF8MB4_GENERAL_CI LIKE CONCAT('%',?,'%')");
+				"AND sender_id = ?");
 		SAVE_QUOTE = connection.prepareStatement("INSERT IGNORE INTO quote (thread_id, message_id) VALUES (?, ?)");
 		ALREADY_QUOTED = connection.prepareStatement("" +
 				"SELECT thread_id " +
@@ -299,7 +306,7 @@ public class Quotes extends DatabaseCommandModule {
 
 	@Override
 	@SuppressWarnings("Duplicates")
-	public boolean process(Message message) throws MalformedCommandException {
+	public boolean process(Message message) throws MalformedCommandException, SQLException {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
 			if (match.equals(GRAB_REGEX)) {

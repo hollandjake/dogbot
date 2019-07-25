@@ -12,24 +12,19 @@ import java.util.Arrays;
 public class Dogbot extends Chatbot {
 	private Boot boot;
 
-	public Dogbot(Config config) {
+	public Dogbot(Config config) throws SQLException {
 		super(config);
 	}
 
-	public static void main(String[] args) {
-		String configFile = args.length > 0 ? args[0] : null;
-		new Dogbot(new Config(configFile));
-	}
-
 	@Override
-	protected void loadModules() {
+	protected void loadModules(Connection connection) throws SQLException {
 		//Overrides
 		modules.put("Commands", new OneLinkCommand(this,
 				Arrays.asList("commands", "help"),
 				"A list of commands can be found at",
 				"https://github.com/hollandjake/dogbot"));
 		modules.put("Github", new OneLinkCommand(this,
-				Arrays.asList("github", "repo"),
+				Arrays.asList("github", "repo", "git"),
 				"Github repository",
 				"https://github.com/hollandjake/dogbot"));
 
@@ -57,22 +52,16 @@ public class Dogbot extends Chatbot {
 				Arrays.asList("trello"),
 				"Trello",
 				"https://trello.com/b/9f49WSW0/second-year-compsci"));
+
+		boot = new Boot(this);
+		boot.prepareStatements(connection);
 	}
 
 	@Override
-	public void databaseReload(Connection connection) throws SQLException {
-		super.databaseReload(connection);
-		if (boot == null) {
-			boot = new Boot(this);
-			boot.prepareStatements(connection);
-			if ((Boolean) config.get("startup_message")) {
-				sendMessageWithImage(boot.getRandomResponse(), boot.getRandomImage());
-			}
+	public void loaded(Connection connection) throws SQLException {
+		super.loaded(connection);
+		if ((Boolean) config.get("startup_message")) {
+			sendMessageWithImage(boot.getRandomResponse(), boot.getRandomImage());
 		}
-	}
-
-	@Override
-	public void loaded() {
-		super.loaded();
 	}
 }
