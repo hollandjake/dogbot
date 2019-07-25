@@ -16,6 +16,11 @@ public class Dogbot extends Chatbot {
 		super(config);
 	}
 
+	public static void main(String[] args) throws SQLException {
+		String configFile = args.length > 0 ? args[0] : null;
+		new Dogbot(new Config(configFile));
+	}
+
 	@Override
 	protected void loadModules(Connection connection) throws SQLException {
 		//Overrides
