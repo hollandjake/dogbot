@@ -54,7 +54,7 @@ public class SystemSetup {
 
 	public SystemSetup(Config config) throws SQLException, IOException {
 		this.config = config;
-		BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://raw.githubusercontent.com/hollandjake/messenger-bot-api/master/src/main/Resources/schema.sql").openStream()));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://raw.githubusercontent.com/hollandjake/messenger-bot-api/master/src/main/resources/schema.sql").openStream()));
 		StringBuilder stmt = new StringBuilder();
 		String r;
 		while ((r = reader.readLine()) != null) {
@@ -141,6 +141,7 @@ public class SystemSetup {
 			createDogs();
 			createEightBall();
 			createExtraGoodDogs();
+			createGran();
 			createReacts();
 		}
 		List<MessageThread> threads = Collections.singletonList(thread);
@@ -157,8 +158,9 @@ public class SystemSetup {
 	private void createBirds() throws SQLException, IOException {
 		try {
 			//Responses
-			Scanner scanner = new Scanner(getClass().getResourceAsStream("Birds/responses.txt"));
-			responseText_STMT.setString(2, Birds.class.getSimpleName());
+			String className = Birds.class.getSimpleName();
+			Scanner scanner = new Scanner(getClass().getResourceAsStream(className + "/responses.txt"));
+			responseText_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String nxt = scanner.nextLine();
 				if (!nxt.isEmpty()) {
@@ -169,8 +171,8 @@ public class SystemSetup {
 			responseText_STMT.executeBatch();
 
 			//Subreddits
-			scanner = new Scanner(getClass().getResourceAsStream("Birds/subreddits.txt"));
-			subreddit_STMT.setString(2, "Birds");
+			scanner = new Scanner(getClass().getResourceAsStream(className + "/subreddits.txt"));
+			subreddit_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String nxt = scanner.nextLine();
 				if (!nxt.isEmpty()) {
@@ -189,8 +191,9 @@ public class SystemSetup {
 	private void createBoot() throws SQLException, IOException {
 		try {
 			//Responses
-			Scanner scanner = new Scanner(getClass().getResourceAsStream("Boot/responses.txt"));
-			responseText_STMT.setString(2, "Boot");
+			String className = Boot.class.getSimpleName();
+			Scanner scanner = new Scanner(getClass().getResourceAsStream(className + "/responses.txt"));
+			responseText_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String nxt = scanner.nextLine();
 				if (!nxt.isEmpty()) {
@@ -201,8 +204,8 @@ public class SystemSetup {
 			responseText_STMT.executeBatch();
 
 			//Images
-			scanner = new Scanner(getClass().getResourceAsStream("Boot/images.txt"));
-			responseImage_STMT.setString(2, "Boot");
+			scanner = new Scanner(getClass().getResourceAsStream(className + "/images.txt"));
+			responseImage_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String x = scanner.nextLine();
 				if (!x.isEmpty()) {
@@ -224,8 +227,9 @@ public class SystemSetup {
 	private void createCats() throws SQLException, IOException {
 		try {
 			//Responses
-			Scanner scanner = new Scanner(getClass().getResourceAsStream("Cats/responses.txt"));
-			responseText_STMT.setString(2, Cats.class.getSimpleName());
+			String className = Cats.class.getSimpleName();
+			Scanner scanner = new Scanner(getClass().getResourceAsStream(className + "/responses.txt"));
+			responseText_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String nxt = scanner.nextLine();
 				if (!nxt.isEmpty()) {
@@ -236,8 +240,8 @@ public class SystemSetup {
 			responseText_STMT.executeBatch();
 
 			//Subreddits
-			scanner = new Scanner(getClass().getResourceAsStream("Cats/subreddits.txt"));
-			subreddit_STMT.setString(2, "Cats");
+			scanner = new Scanner(getClass().getResourceAsStream(className + "/subreddits.txt"));
+			subreddit_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String nxt = scanner.nextLine();
 				if (!nxt.isEmpty()) {
@@ -256,8 +260,9 @@ public class SystemSetup {
 	private void createDogs() throws SQLException, IOException {
 		try {
 			//Responses
-			Scanner scanner = new Scanner(getClass().getResourceAsStream("Dogs/responses.txt"));
-			responseText_STMT.setString(2, Dogs.class.getSimpleName());
+			String className = Dogs.class.getSimpleName();
+			Scanner scanner = new Scanner(getClass().getResourceAsStream(className + "/responses.txt"));
+			responseText_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String nxt = scanner.nextLine();
 				if (!nxt.isEmpty()) {
@@ -268,8 +273,8 @@ public class SystemSetup {
 			responseText_STMT.executeBatch();
 
 			//Subreddits
-			scanner = new Scanner(getClass().getResourceAsStream("Dogs/subreddits.txt"));
-			subreddit_STMT.setString(2, "Dogs");
+			scanner = new Scanner(getClass().getResourceAsStream(className + "/subreddits.txt"));
+			subreddit_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String nxt = scanner.nextLine();
 				if (!nxt.isEmpty()) {
@@ -288,8 +293,9 @@ public class SystemSetup {
 	private void createEightBall() throws SQLException, IOException {
 		try {
 			//Responses
-			Scanner scanner = new Scanner(getClass().getResourceAsStream("EightBall/responses.txt"));
-			responseText_STMT.setString(2, "EightBall");
+			String className = EightBall.class.getSimpleName();
+			Scanner scanner = new Scanner(getClass().getResourceAsStream(className + "/responses.txt"));
+			responseText_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String nxt = scanner.nextLine();
 				if (!nxt.isEmpty()) {
@@ -308,8 +314,9 @@ public class SystemSetup {
 	private void createExtraGoodDogs() throws SQLException, IOException {
 		try {
 			//Images
-			Scanner scanner = new Scanner(getClass().getResourceAsStream("ExtraGoodDogs/images.txt"));
-			responseImage_STMT.setString(2, ExtraGoodDogs.class.getSimpleName());
+			String className = ExtraGoodDogs.class.getSimpleName();
+			Scanner scanner = new Scanner(getClass().getResourceAsStream(className + "/images.txt"));
+			responseImage_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String x = scanner.nextLine();
 				if (!x.isEmpty()) {
@@ -325,6 +332,27 @@ public class SystemSetup {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("The best dogs didn't bork");
+		}
+	}
+
+	private void createGran() throws SQLException, IOException {
+		try {
+			//Responses
+			String className = Gran.class.getSimpleName();
+			Scanner scanner = new Scanner(getClass().getResourceAsStream(className + "/responses.txt"));
+			responseText_STMT.setString(2, className);
+			while (scanner.hasNextLine()) {
+				String nxt = scanner.nextLine();
+				if (!nxt.isEmpty()) {
+					responseText_STMT.setString(1, nxt);
+					responseText_STMT.addBatch();
+				}
+			}
+			responseText_STMT.executeBatch();
+			System.out.println("Gran created");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("We were too late, we couldnt save gran");
 		}
 	}
 
@@ -444,7 +472,8 @@ public class SystemSetup {
 	private void createQuotes(MessageThread thread) throws SQLException, IOException {
 		try {
 			//Responses
-			InputStream stream = getClass().getResourceAsStream("Quotes/" + thread.getThreadName() + ".json");
+			String className = Quotes.class.getSimpleName();
+			InputStream stream = getClass().getResourceAsStream(className + "/" + thread.getThreadName() + ".json");
 			JSONArray quotes = (JSONArray) jsonParser.parse(new InputStreamReader(stream));
 			for (Object q : quotes) {
 				String quote = (String) ((JSONObject) q).get("message");
@@ -474,8 +503,9 @@ public class SystemSetup {
 	private void createReacts() throws SQLException, IOException {
 		try {
 			//Images
-			Scanner scanner = new Scanner(getClass().getResourceAsStream("Reacts/catReacts.txt"));
-			responseImage_STMT.setString(2, Reacts.class.getSimpleName());
+			String className = Reacts.class.getSimpleName();
+			Scanner scanner = new Scanner(getClass().getResourceAsStream(className + "/catReacts.txt"));
+			responseImage_STMT.setString(2, className);
 			while (scanner.hasNextLine()) {
 				String x = scanner.nextLine();
 				if (!x.isEmpty()) {
