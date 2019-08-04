@@ -8,9 +8,9 @@ import com.hollandjake.messenger_bot_api.util.Config;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Dogbot extends Chatbot {
-	private Boot boot;
 
 	public Dogbot(Config config) throws SQLException {
 		super(config);
@@ -41,6 +41,7 @@ public class Dogbot extends Chatbot {
 		modules.put("EightBall", new EightBall(this));
 		modules.put("ExtraGoodCats", new ExtraGoodCats(this));
 		modules.put("ExtraGoodDogs", new ExtraGoodDogs(this));
+		modules.put("Grab", new Gran(this));
 		modules.put("Inspire", new Inspire(this));
 		modules.put("Quotes", new Quotes(this));
 		modules.put("Reacts", new Reacts(this));
@@ -51,22 +52,21 @@ public class Dogbot extends Chatbot {
 
 		//Extra commands
 		modules.put("Feedback", new OneLinkCommand(this,
-				Arrays.asList("feedback"),
+				Collections.singletonList("feedback"),
 				"Feedback form",
 				"https://docs.google.com/document/d/19Vquu0fh8LCqUXH0wwpm9H9MSq1LrEx1Z2Xg9NknKmg/edit?usp=sharing"));
 		modules.put("Trello", new OneLinkCommand(this,
-				Arrays.asList("trello"),
+				Collections.singletonList("trello"),
 				"Trello",
 				"https://trello.com/b/9f49WSW0/second-year-compsci"));
-
-		boot = new Boot(this);
-		boot.prepareStatements(connection);
 	}
 
 	@Override
 	public void loaded(Connection connection) throws SQLException {
 		super.loaded(connection);
 		if ((Boolean) config.get("startup_message")) {
+			Boot boot = new Boot(this);
+			boot.prepareStatements(connection);
 			sendMessageWithImage(boot.getRandomResponse(), boot.getRandomImage());
 		}
 	}
