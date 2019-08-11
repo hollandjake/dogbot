@@ -2,33 +2,19 @@
 
 Facebook messenger group chat bot for the Department of Computer Science students at the University Of Sheffield. Expands upon the [Chatbot](https://github.com/hollandjake/chatbot) system.
 
-Commands
-========
-
-Inherited commands
-------------------
-| Command | Response |
-| ------- | -------- |
-| `!commands` or `!help` | Links to this readme |
-| `!github` or `!repo` | Links to [this](https://github.com/hollandjake/dogbot) github repository |
-| `!ping` | Checks if bot is active |
-| `!shutdown [code]` | shuts the bot down. The code is output at boot for the bot |
-| `!stats` | Outputs information about the bots configuration |
-| `!uptime` or `!puptime` | Outputs how long the bot has been running |
-
 # Modules
 
 ## Birds
 ### `!bird`
 > Send a picture of a bird
 ### `!birb`
-> Alias for [`!bird`](#!bird)
+> Alias for [`!bird`](#bird)
 
 ## Cats
 ### `!cat`
 > Send a picture of a cat
 ### `!catto`
-> Alias for [`!cat`](#!cat)
+> Alias for [`!cat`](#cat)
 
 ## Dirk
 ### `!dirk`
@@ -38,39 +24,39 @@ Inherited commands
 ### `!dog`
 > Send a picture of a dog
 ### `!doggo`
-> Alias for [`!dog`](#!dog)
+> Alias for [`!dog`](#dog)
 
 ## EightBall
 ### `!8ball [message]`
 > Send a picture of a cat
 ### `!ask [message]`
-> Alias for [`!8ball [message]`](#!8ball-[message])
+> Alias for [`!8ball [message]`](#8ball-message)
 
 ## ExtraGoodCats
 ### `!extragoodcat`
 > Send a picture of an extra good cat
 ### `!egc`
-> Alias for [`!extragoodcat`](#!extragoodcat)
+> Alias for [`!extragoodcat`](#extragoodcat)
 
 ## ExtraGoodDogs
 ### `!extragooddog`
 > Send a picture of an extra good dog
 ### `!egd`
-> Alias for [`!extragooddog`](#!extragooddog)
+> Alias for [`!extragooddog`](#extragooddog)
 
 ## Grab
 ### `!grab`
 > Grabs the last message sent that wasn't from the bot
 ### `!grab [num]`
-> Grabs the message \[num] behind. `!grab 1` is equal to [`!grab`](#!grab)
+> Grabs the message \[num] behind. `!grab 1` is equal to [`!grab`](#grab)
 ### `!grab [message]`
 > Grabs the first message which contains \[message] in reverse chronological order.
 ### `!locate [message]`
-> Alias for [`!grab [message]`](#!grab-[message])
+> Alias for [`!grab [message]`](#grab-message)
 
 ## Gran
 ### `!gran`
-> Sends funny granny quotes when someone makes a [`!grab`](#!grab) typo.
+> Sends funny granny quotes when someone makes a [`!grab`](#grab) typo.
 
 ## Inspire
 ### `!inspire`
@@ -88,21 +74,21 @@ Inherited commands
 ### `!quotepercentage [name]`
 > Returns the percentage of quotes for a person who most closely matches the name
 ### `!qp [name]`
-> Alias for [`!quotepercentage [name]`](#!quotepercentage-[name])
+> Alias for [`!quotepercentage [name]`](#quotepercentage-name)
 ### `!quote% [name]`
-> Alias for [`!quotepercentage [name]`](#!quotepercentage-[name])
+> Alias for [`!quotepercentage [name]`](#quotepercentage-name)
 ### `!q% [name]`
-> Alias for [`!quotepercentage [name]`](#!quotepercentage-[name])
+> Alias for [`!quotepercentage [name]`](#quotepercentage-name)
 ### `!% [name]`
-> Alias for [`!quotepercentage [name]`](#!quotepercentage-[name])
+> Alias for [`!quotepercentage [name]`](#quotepercentage-name)
 ### `!quoteleaderboard`
 > Returns the top 5 quoters
 ### `!qlb`
-> Alias for [`!quoteleaderboard`](#!quoteleaderboard)
+> Alias for [`!quoteleaderboard`](#quoteleaderboard)
 ### `!quoteleaderboard [num]`
 > Returns the top \[num] quoters
 ### `!qlb [name]`
-> Alias for [`!quoteleaderboard [num]`](#!quoteleaderboard-[num])
+> Alias for [`!quoteleaderboard [num]`](#quoteleaderboard-num)
 
 ## Reacts
 ### `!react`
@@ -124,11 +110,11 @@ Inherited commands
 ### `!think`
 > Returns a think emoji
 ### `!thonk`
-> Alias for [`!think`](#!think)
+> Alias for [`!think`](#think)
 ### `!think [num]`
 > Returns \[num] think emojis
 ### `!thonk [num]`
-> Alias for [`!think [num]`](#!think-[num])
+> Alias for [`!think [num]`](#think-num)
 
 ## XKCD
 ### `!xkcd`
@@ -136,7 +122,7 @@ Inherited commands
 ### `!xkcd latest`
 > Returns the lastest XKCD
 ### `!xkcd l`
-> Alias for [`!xkcd latest`](#!xkcd-latest)
+> Alias for [`!xkcd latest`](#xkcd-latest)
 ### `!xkcd [num]`
 > Returns \[num] xkcd
 
@@ -144,14 +130,32 @@ Inherited commands
 ### `!commands`
 > Returns a link to this readme
 ### `!help`
-> Alias for [`!commands`](#!commands)
+> Alias for [`!commands`](#commands)
 ### `!github`
 > Returns a link to this repository
 ### `!repo`
-> Alias for [`!github`](#!github)
+> Alias for [`!github`](#github)
 ### `!git`
-> Alias for [`!github`](#!github)
+> Alias for [`!github`](#github)
 ### `!feedback`
 > Returns a link to the group [Feedback form](https://docs.google.com/document/d/19Vquu0fh8LCqUXH0wwpm9H9MSq1LrEx1Z2Xg9NknKmg/edit?usp=sharing)
 ### `!trello`
 > Returns a link to the group [Trello page](https://trello.com/b/9f49WSW0/second-year-compsci)
+
+# Inherited Modules
+
+## Ping
+### `!ping`
+> Checks if the bot is active
+
+## Shutdown
+### `!shutdown [code]`
+> Shuts the bot down remotely using the code output at boot
+
+## Stats
+### `!stats`
+> Outputs information about the bots configuration
+### `!uptime`
+> Outputs how long the bot has been running
+### `!puptime`
+> Alias for [`!uptime`](#puptime)
