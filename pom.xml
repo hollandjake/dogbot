@@ -6,7 +6,7 @@
 
     <groupId>com.hollandjake</groupId>
     <artifactId>dogbot</artifactId>
-    <version>3.5.2</version>
+    <version>3.5.3</version>
     <build>
         <plugins>
             <plugin>

@@ -158,4 +158,4 @@ Facebook messenger group chat bot for the Department of Computer Science student
 ### `!uptime`
 > Outputs how long the bot has been running
 ### `!puptime`
-> Alias for [`!uptime`](#puptime)
+> Alias for [`!uptime`](#uptime)
