@@ -89,6 +89,10 @@ Facebook messenger group chat bot for the Department of Computer Science student
 > Returns the top \[num] quoters
 ### `!qlb [name]`
 > Alias for [`!quoteleaderboard [num]`](#quoteleaderboard-num)
+### `!quoteimg`
+> Returns a random image quote
+### `!quoteimg [name]`
+> Returns a random image quote by a person who most closely matches the name
 
 ## Reacts
 ### `!react`

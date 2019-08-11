@@ -24,6 +24,7 @@ public class Quotes extends DatabaseCommandModule {
 	private final String QUOTE_TOTAL_COUNT_REGEX = ACTIONIFY("quotecount");
 	private final String QUOTE_PERCENTAGE_REGEX = ACTIONIFY("(quotepercentage|qp|quote%|q%|%) (.+)");
 	private final String QUOTE_LEADERBOARD_REGEX = ACTIONIFY("(quoteleaderboard|qlb)( (.+))?");
+	private final String QUOTE_IMG_REGEX = ACTIONIFY("quoteimg( (.+))?");
 
 	private PreparedStatement GET_RAND_QUOTE;
 	private PreparedStatement GET_RAND_QUOTE_WITH_HUMAN_ID;
@@ -31,6 +32,8 @@ public class Quotes extends DatabaseCommandModule {
 	private PreparedStatement GET_NUM_QUOTES_WITH_HUMAN_ID;
 	private PreparedStatement GET_PERCENTAGE_WITH_HUMAN_ID;
 	private PreparedStatement GET_QUOTE_LEADERBOARD;
+	private PreparedStatement GET_RAND_IMG_QUOTE;
+	private PreparedStatement GET_RAND_IMG_QUOTE_WITH_HUMAN_ID;
 
 	public Quotes(Chatbot chatbot) {
 		super(chatbot);
@@ -154,6 +157,40 @@ public class Quotes extends DatabaseCommandModule {
 		}
 	}
 
+	private Message randomQuote() throws SQLException {
+		db.checkConnection();
+		GET_RAND_QUOTE.setInt(1, chatbot.getThread().getId());
+		ResultSet resultSet = GET_RAND_QUOTE.executeQuery();
+		if (resultSet.next()) {
+			return db.getMessage(resultSet.getInt("message_id"));
+		}
+		return null;
+	}
+
+	private Message randomImageQuote() throws SQLException {
+		db.checkConnection();
+		GET_RAND_IMG_QUOTE.setInt(1, chatbot.getThread().getId());
+		ResultSet resultSet = GET_RAND_IMG_QUOTE.executeQuery();
+		if (resultSet.next()) {
+			return db.getMessage(resultSet.getInt("message_id"));
+		}
+		return null;
+	}
+
+	private Message getRandomImageQuoteFromName(String name) throws SQLException {
+		db.checkConnection();
+		Integer humanId = db.getHumanIdWithNameLike(name);
+		if (humanId != null) {
+			GET_RAND_IMG_QUOTE_WITH_HUMAN_ID.setInt(1, chatbot.getThread().getId());
+			GET_RAND_IMG_QUOTE_WITH_HUMAN_ID.setInt(2, humanId);
+			ResultSet resultSet = GET_RAND_IMG_QUOTE_WITH_HUMAN_ID.executeQuery();
+			if (resultSet.next()) {
+				return db.getMessage(resultSet.getInt("message_id"));
+			}
+		}
+		return null;
+	}
+
 	private static String applyType(String message, String type) {
 		switch (type) {
 			case "caps":
@@ -176,7 +213,7 @@ public class Quotes extends DatabaseCommandModule {
 		return message;
 	}
 
-	public static Message quoteMessage(Message message, String type) {
+	static Message quoteMessage(Message message, String type) {
 		List<MessageComponent> components = message.getComponents();
 		boolean containsText = false;
 		for (int i = 0; i < components.size(); i++) {
@@ -208,14 +245,36 @@ public class Quotes extends DatabaseCommandModule {
 				"WHERE thread_id = ? " +
 				"ORDER BY RAND() " +
 				"LIMIT 1");
+		GET_RAND_IMG_QUOTE = connection.prepareStatement("" +
+				"SELECT" +
+				"   q.thread_id," +
+				"   q.message_id " +
+				"FROM quote q " +
+				"RIGHT JOIN message m on q.message_id = m.message_id AND q.thread_id = m.thread_id " +
+				"RIGHT JOIN message_image mi on m.message_id = mi.message_id " +
+				"WHERE q.thread_id = ? " +
+				"ORDER BY RAND() " +
+				"LIMIT 1");
 		GET_RAND_QUOTE_WITH_HUMAN_ID = connection.prepareStatement("" +
 				"SELECT" +
-				"   m.thread_id," +
-				"   m.message_id " +
-				"FROM quote " +
-				"JOIN message m on quote.message_id = m.message_id AND quote.thread_id = m.thread_id " +
+				"   q.thread_id," +
+				"   q.message_id " +
+				"FROM quote q " +
+				"JOIN message m on q.message_id = m.message_id " +
+				"AND q.thread_id = m.thread_id " +
 				"WHERE m.thread_id = ? " +
 				"AND sender_id = ? " +
+				"ORDER BY RAND() " +
+				"LIMIT 1");
+		GET_RAND_IMG_QUOTE_WITH_HUMAN_ID = connection.prepareStatement("" +
+				"SELECT" +
+				"   q.thread_id," +
+				"   q.message_id " +
+				"FROM quote q " +
+				"JOIN message m on q.message_id = m.message_id AND q.thread_id = m.thread_id " +
+				"RIGHT JOIN message_image mi on m.message_id = mi.message_id " +
+				"WHERE q.thread_id = ? " +
+				"AND m.sender_id = ? " +
 				"ORDER BY RAND() " +
 				"LIMIT 1");
 		GET_NUM_QUOTES = connection.prepareStatement("" +
@@ -275,7 +334,7 @@ public class Quotes extends DatabaseCommandModule {
 							chatbot.sendMessage("\"" + quoteName + "\" has 0 quotes! :'(");
 						}
 					} else {
-						quote = getRandomQuote();
+						quote = randomQuote();
 					}
 					quote(quote, getType((Text) component));
 				} else if (match.equals(QUOTE_COUNT_REGEX)) {
@@ -308,6 +367,20 @@ public class Quotes extends DatabaseCommandModule {
 						}
 					}
 					leaderboard(5);
+				} else if (match.equals(QUOTE_IMG_REGEX)) {
+					String text = ((Text) component).getText();
+					Matcher matcher = Pattern.compile(QUOTE_IMG_REGEX).matcher(text);
+					Message quote;
+					if (matcher.find() && matcher.group(2) != null) {
+						String quoteName = matcher.group(2);
+						quote = getRandomImageQuoteFromName(quoteName);
+						if (quote == null) {
+							chatbot.sendMessage("\"" + quoteName + "\" has 0 image quotes! :'(");
+						}
+					} else {
+						quote = randomImageQuote();
+					}
+					quote(quote, getType((Text) component));
 				}
 				return true;
 			}
@@ -330,22 +403,10 @@ public class Quotes extends DatabaseCommandModule {
 				return QUOTE_PERCENTAGE_REGEX;
 			} else if (text.matches(QUOTE_LEADERBOARD_REGEX)) {
 				return QUOTE_LEADERBOARD_REGEX;
+			} else if (text.matches(QUOTE_IMG_REGEX)) {
+				return QUOTE_IMG_REGEX;
 			}
 		}
 		return "";
-	}
-
-	private Message getRandomQuote() {
-		try {
-			db.checkConnection();
-			GET_RAND_QUOTE.setInt(1, chatbot.getThread().getId());
-			ResultSet resultSet = GET_RAND_QUOTE.executeQuery();
-			if (resultSet.next()) {
-				return db.getMessage(resultSet.getInt("message_id"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 }
