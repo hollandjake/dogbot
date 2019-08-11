@@ -30,13 +30,14 @@ public class ExtraGoodDogs extends DatabaseCommandModule {
 	public boolean process(Message message) {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(EXTRA_GOOD_DOG_REGEX) || match.equals(EDG_REGEX)) {
-				Message sending = Message.fromString(chatbot.getThread(), chatbot.getMe(), "Extra good woof!");
-				sending.getComponents().add(getRandomImage());
-				chatbot.sendMessage(sending);
+			if (!match.isEmpty()) {
+				if (match.equals(EXTRA_GOOD_DOG_REGEX) || match.equals(EDG_REGEX)) {
+					Message sending = Message.fromString(chatbot.getThread(), chatbot.getMe(), "Extra good woof!");
+					sending.getComponents().add(getRandomImage());
+					chatbot.sendMessage(sending);
+				}
 				return true;
 			}
-
 		}
 		return false;
 	}

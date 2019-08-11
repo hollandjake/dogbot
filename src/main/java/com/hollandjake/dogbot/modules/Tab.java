@@ -21,8 +21,10 @@ public class Tab extends CommandModule {
 	public boolean process(Message message) {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(TAB_REGEX)) {
-				chatbot.sendMessageWithImage("\uD83D\uDEA8 WEE WOO WEE WOO \uD83D\uDEA8", "https://www.hollandjake.com/dogbot/tabulance.png");
+			if (!match.isEmpty()) {
+				if (match.equals(TAB_REGEX)) {
+					chatbot.sendMessageWithImage("\uD83D\uDEA8 WEE WOO WEE WOO \uD83D\uDEA8", "https://www.hollandjake.com/dogbot/tabulance.png");
+				}
 				return true;
 			}
 		}

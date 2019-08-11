@@ -22,9 +22,11 @@ public class Inspire extends CommandModule {
 	public boolean process(Message message) {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(INSPIRE_REGEX)) {
-				String imgURL = GET_PAGE_SOURCE("http://inspirobot.me/api?generate=true");
-				chatbot.sendMessageWithImage("Inspiring.", imgURL);
+			if (!match.isEmpty()) {
+				if (match.equals(INSPIRE_REGEX)) {
+					String imgURL = GET_PAGE_SOURCE("http://inspirobot.me/api?generate=true");
+					chatbot.sendMessageWithImage("Inspiring.", imgURL);
+				}
 				return true;
 			}
 		}

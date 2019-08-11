@@ -33,18 +33,19 @@ public class EightBall extends DatabaseCommandModule {
 	public boolean process(Message message) throws MalformedCommandException {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(NO_QUESTION_REGEX)) {
-				chatbot.sendMessage("Please enter a question after the command");
-				return true;
-			} else if (match.equals(QUESTION_REGEX)) {
-				String text = ((Text) component).getText();
-				Matcher matcher = Pattern.compile(QUESTION_REGEX).matcher(text);
-				if (matcher.find() && !matcher.group(2).isEmpty()) {
-					chatbot.sendMessage(getRandomResponse());
-					return true;
-				} else {
-					throw new MalformedCommandException();
+			if (!match.isEmpty()) {
+				if (match.equals(NO_QUESTION_REGEX)) {
+					chatbot.sendMessage("Please enter a question after the command");
+				} else if (match.equals(QUESTION_REGEX)) {
+					String text = ((Text) component).getText();
+					Matcher matcher = Pattern.compile(QUESTION_REGEX).matcher(text);
+					if (matcher.find() && !matcher.group(2).isEmpty()) {
+						chatbot.sendMessage(getRandomResponse());
+					} else {
+						throw new MalformedCommandException();
+					}
 				}
+				return true;
 			}
 		}
 		return false;

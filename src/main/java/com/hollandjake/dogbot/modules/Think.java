@@ -28,23 +28,24 @@ public class Think extends CommandModule {
 	public boolean process(Message message) throws MalformedCommandException {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(THINK_REGEX) || match.equals(THONK_REGEX)) {
-				chatbot.sendMessage("\uD83E\uDD14");
-				return true;
-			} else if (match.equals(MULTI_THINK_REGEX) || match.equals(MULTI_THONK_REGEX)) {
-				String text = ((Text) component).getText();
-				Matcher matcher = Pattern.compile(match).matcher(text);
-				if (matcher.find()) {
-					int repeats = Integer.parseInt(matcher.group(1));
-					if (repeats > 100) {
-						chatbot.sendMessage("That's a bit too much thinking right there!");
+			if (!match.isEmpty()) {
+				if (match.equals(THINK_REGEX) || match.equals(THONK_REGEX)) {
+					chatbot.sendMessage("\uD83E\uDD14");
+				} else if (match.equals(MULTI_THINK_REGEX) || match.equals(MULTI_THONK_REGEX)) {
+					String text = ((Text) component).getText();
+					Matcher matcher = Pattern.compile(match).matcher(text);
+					if (matcher.find()) {
+						int repeats = Integer.parseInt(matcher.group(1));
+						if (repeats > 100) {
+							chatbot.sendMessage("That's a bit too much thinking right there!");
+						} else {
+							chatbot.sendMessage(new String(new char[repeats]).replace("\0", "\uD83E\uDD14"));
+						}
 					} else {
-						chatbot.sendMessage(new String(new char[repeats]).replace("\0", "\uD83E\uDD14"));
+						throw new MalformedCommandException();
 					}
-					return true;
-				} else {
-					throw new MalformedCommandException();
 				}
+				return true;
 			}
 		}
 		return false;

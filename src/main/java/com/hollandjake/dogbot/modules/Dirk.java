@@ -21,11 +21,12 @@ public class Dirk extends CommandModule {
 	public boolean process(Message message) {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(DIRK_REGEX)) {
-				chatbot.sendMessageWithImage("Our lord and saviour has greeted us", "https://staffwww.dcs.shef.ac.uk/people/D.Sudholt/Dirk_Sudholt-cropped.jpg");
+			if (!match.isEmpty()) {
+				if (match.equals(DIRK_REGEX)) {
+					chatbot.sendMessageWithImage("Our lord and saviour has greeted us", "https://staffwww.dcs.shef.ac.uk/people/D.Sudholt/Dirk_Sudholt-cropped.jpg");
+				}
 				return true;
 			}
-
 		}
 		return false;
 	}

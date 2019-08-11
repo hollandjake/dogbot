@@ -41,9 +41,10 @@ public class Dogbot extends Chatbot {
 		modules.put("EightBall", new EightBall(this));
 		modules.put("ExtraGoodCats", new ExtraGoodCats(this));
 		modules.put("ExtraGoodDogs", new ExtraGoodDogs(this));
-		modules.put("Grab", new Gran(this));
+		modules.put("Gran", new Gran(this));
 		modules.put("Inspire", new Inspire(this));
 		modules.put("Quotes", new Quotes(this));
+		modules.put("Grab", new Grab(this));
 		modules.put("Reacts", new Reacts(this));
 		modules.put("Roll", new Roll(this));
 		modules.put("Tab", new Tab(this));
@@ -65,9 +66,15 @@ public class Dogbot extends Chatbot {
 	public void loaded(Connection connection) throws SQLException {
 		super.loaded(connection);
 		if ((Boolean) config.get("startup_message")) {
+			if (debugging()) {
+				System.out.println("Booting");
+			}
 			Boot boot = new Boot(this);
 			boot.prepareStatements(connection);
 			sendMessageWithImage(boot.getRandomResponse(), boot.getRandomImage());
+			if (debugging()) {
+				System.out.println("Boot message sent");
+			}
 		}
 	}
 }

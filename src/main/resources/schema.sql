@@ -45,3 +45,22 @@ CREATE TABLE IF NOT EXISTS quote
     FOREIGN KEY (thread_id) REFERENCES message (thread_id),
     FOREIGN KEY (message_id) REFERENCES message (message_id)
 );
+
+DROP FUNCTION IF EXISTS GetPercentageWithHumanId;
+CREATE FUNCTION GetPercentageWithHumanId(threadId INT, humanId INT) RETURNS DOUBLE
+BEGIN
+    DECLARE total INT;
+    DECLARE sum INT;
+
+    IF (NOT ISNULL(humanId)) THEN
+        SET total = (SELECT COUNT(*) FROM quote WHERE thread_id = threadId);
+        SET sum = (SELECT COUNT(*)
+                   FROM quote q
+                            JOIN message m on q.message_id = m.message_id
+                   WHERE q.thread_id = threadId
+                     and m.sender_id = humanId);
+        RETURN sum / total;
+    ELSE
+        RETURN NULL;
+    END IF;
+END;
