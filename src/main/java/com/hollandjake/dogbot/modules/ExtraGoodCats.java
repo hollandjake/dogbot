@@ -28,14 +28,16 @@ public class ExtraGoodCats extends CommandModule {
 	public boolean process(Message message) {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(EXTRA_GOOD_CATS_REGEX) || match.equals(EGC_REGEX)) {
-				try {
-					JSONObject img = (JSONObject) ((JSONArray) parser.parse(GET_PAGE_SOURCE("https://api.thecatapi.com/v1/images/search"))).get(0);
-					String url = (String) img.get("url");
-					chatbot.sendMessageWithImage("MEOW!", url);
-				} catch (ParseException e) {
-					e.printStackTrace();
-					chatbot.sendMessage("I am unable to meow.");
+			if (!match.isEmpty()) {
+				if (match.equals(EXTRA_GOOD_CATS_REGEX) || match.equals(EGC_REGEX)) {
+					try {
+						JSONObject img = (JSONObject) ((JSONArray) parser.parse(GET_PAGE_SOURCE("https://api.thecatapi.com/v1/images/search"))).get(0);
+						String url = (String) img.get("url");
+						chatbot.sendMessageWithImage("MEOW!", url);
+					} catch (ParseException e) {
+						e.printStackTrace();
+						chatbot.sendMessage("I am unable to meow.");
+					}
 				}
 				return true;
 			}

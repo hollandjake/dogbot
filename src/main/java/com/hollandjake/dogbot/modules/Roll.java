@@ -31,22 +31,23 @@ public class Roll extends CommandModule {
 	public boolean process(Message message) throws MalformedCommandException {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(ROLL_DICE_REGEX)) {
-				roll(1, 6);
-				return true;
-			} else if (match.equals(ROLL_REGEX)) {
-				String text = ((Text) component).getText();
-				Matcher matcher = Pattern.compile(ROLL_REGEX).matcher(text);
-				if (matcher.find() && !matcher.group(1).isEmpty()) {
-					try {
-						roll(1, Integer.parseInt(matcher.group(1)));
-						return true;
-					} catch (NumberFormatException e) {
+			if (!match.isEmpty()) {
+				if (match.equals(ROLL_DICE_REGEX)) {
+					roll(1, 6);
+				} else if (match.equals(ROLL_REGEX)) {
+					String text = ((Text) component).getText();
+					Matcher matcher = Pattern.compile(ROLL_REGEX).matcher(text);
+					if (matcher.find() && !matcher.group(1).isEmpty()) {
+						try {
+							roll(1, Integer.parseInt(matcher.group(1)));
+						} catch (NumberFormatException e) {
+							throw new MalformedCommandException();
+						}
+					} else {
 						throw new MalformedCommandException();
 					}
-				} else {
-					throw new MalformedCommandException();
 				}
+				return true;
 			}
 		}
 		return false;

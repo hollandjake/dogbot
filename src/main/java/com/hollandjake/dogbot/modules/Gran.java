@@ -30,8 +30,10 @@ public class Gran extends DatabaseCommandModule {
 	public boolean process(Message message) throws MalformedCommandException {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(GRAN_REGEX)) {
-				chatbot.sendMessage("Granny says: \"" + getRandomResponse() + "\"");
+			if (!match.isEmpty()) {
+				if (match.equals(GRAN_REGEX)) {
+					chatbot.sendMessage("Granny says: \"" + getRandomResponse() + "\"");
+				}
 				return true;
 			}
 		}

@@ -30,13 +30,14 @@ public class Reacts extends DatabaseCommandModule {
 	public boolean process(Message message) {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(REACT_REGEX) || match.equals(REAC_REGEX)) {
-				Message sending = Message.fromString(chatbot.getThread(), chatbot.getMe(), "Extra good woof!");
-				sending.getComponents().add(getRandomImage());
-				chatbot.sendMessage(sending);
+			if (!match.isEmpty()) {
+				if (match.equals(REACT_REGEX) || match.equals(REAC_REGEX)) {
+					Message sending = Message.fromString(chatbot.getThread(), chatbot.getMe(), "Extra good woof!");
+					sending.getComponents().add(getRandomImage());
+					chatbot.sendMessage(sending);
+				}
 				return true;
 			}
-
 		}
 		return false;
 	}

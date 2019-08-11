@@ -58,24 +58,22 @@ public class XKCD extends CommandModule {
 	public boolean process(Message message) throws MalformedCommandException {
 		for (MessageComponent component : message.getComponents()) {
 			String match = getMatch(component);
-			if (match.equals(XKCD_REGEX)) {
-				sendRandomXKCD();
-				return true;
-			} else if (match.equals(LATEST_SHORT_XKCD_REGEX) || match.equals(LATEST_XKCD_REGEX)) {
-				sendXKCD(highestNumber);
-				return true;
-			} else if (match.equals(SPECIFIC_XKCD_REGEX)) {
-				String text = ((Text) component).getText();
-				Matcher matcher = Pattern.compile(SPECIFIC_XKCD_REGEX).matcher(text);
-				if (matcher.find()) {
-					int number = Integer.parseInt(matcher.group(1));
-					sendXKCD(number);
-				} else {
-					throw new MalformedCommandException();
+			if (!match.isEmpty()) {
+				if (match.equals(XKCD_REGEX)) {
+					sendRandomXKCD();
+				} else if (match.equals(LATEST_SHORT_XKCD_REGEX) || match.equals(LATEST_XKCD_REGEX)) {
+					sendXKCD(highestNumber);
+				} else if (match.equals(SPECIFIC_XKCD_REGEX)) {
+					String text = ((Text) component).getText();
+					Matcher matcher = Pattern.compile(SPECIFIC_XKCD_REGEX).matcher(text);
+					if (matcher.find()) {
+						int number = Integer.parseInt(matcher.group(1));
+						sendXKCD(number);
+					} else {
+						throw new MalformedCommandException();
+					}
 				}
 				return true;
-			} else {
-				return false;
 			}
 		}
 		return false;
