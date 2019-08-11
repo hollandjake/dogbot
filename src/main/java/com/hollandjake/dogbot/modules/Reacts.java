@@ -13,8 +13,8 @@ import static com.hollandjake.chatbot.utils.CONSTANTS.ACTIONIFY;
 
 
 public class Reacts extends DatabaseCommandModule {
-	private final String REACT_REGEX = ACTIONIFY("react (.*)");
-	private final String REAC_REGEX = ACTIONIFY("reac+ (.*)");
+	private final String REACT_REGEX = ACTIONIFY("react( (.*))?");
+	private final String REAC_REGEX = ACTIONIFY("reac+( (.*))?");
 
 	public Reacts(Chatbot chatbot) {
 		super(chatbot);
