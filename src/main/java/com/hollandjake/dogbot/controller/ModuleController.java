@@ -116,7 +116,7 @@ public class ModuleController {
                 messageService,
                 Collections.singletonList("trello"),
                 "Trello",
-                "https://trello.com/b/9f49WSW0/second-year-compsci",
+                "https://trello.com/invite/b/9f49WSW0/5aeb3b9523a722573df5121d65bdad56/second-year-compsci",
                 false
         ));
     }
