@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
@@ -22,6 +23,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @Controller
 @EnableCaching
+@EnableScheduling
 @SpringBootApplication
 public class ChatbotApplication {
     private final Environment env;
@@ -32,13 +34,12 @@ public class ChatbotApplication {
     private LocalDateTime startup;
 
     @Autowired
-    public ChatbotApplication(Environment env,
-                              WebController webController) {
-        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> errorHandler(this, e));
+    public ChatbotApplication(Environment env, WebController webController) {
         this.env = env;
         this.webController = webController;
         setVersion();
         this.startup = LocalDateTime.now();
+        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> errorHandler(this, e));
     }
 
     public static void main(String[] args) {

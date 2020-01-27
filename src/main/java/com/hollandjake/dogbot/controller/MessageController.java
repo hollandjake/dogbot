@@ -6,9 +6,9 @@ import com.hollandjake.dogbot.service.MessageService;
 import com.hollandjake.dogbot.util.BrowserStatus;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.WebDriverException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.unit.DataSize;
@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Controller
-@EnableScheduling
 public class MessageController {
     private final WebController webController;
     @Getter
@@ -45,49 +44,44 @@ public class MessageController {
         this.messageService = messageService;
         this.application = application;
         this.moduleController = moduleController;
-        webController.restart();
         moduleController.onLoad();
-    }
-
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void refresh() throws InterruptedException {
-        log.debug("Reloading window");
-        while (!webController.getStatus().equals(BrowserStatus.AWAITING_MESSAGE)) {
-            Thread.sleep(10);
-        }
-        webController.restart();
     }
 
     @Scheduled(fixedDelay = 1)
     public void checkForMessages() {
+        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> application.errorHandler(this, e));
         log.debug("Checking for messages");
-        while (webController.getStatus().equals(BrowserStatus.AWAITING_MESSAGE)) {
-            Message latestStoredMessage = messageService.getLatestMessage();
+        try {
+            while (webController.getStatus().equals(BrowserStatus.AWAITING_MESSAGE)) {
+                Message latestStoredMessage = messageService.getLatestMessage();
 
-            //Load messages from before it was loaded
-            do {
-                Stream<LocalDateTime> dates = messageService.getMessageDates();
+                //Load messages from before it was loaded
+                do {
+                    Stream<LocalDateTime> dates = messageService.getMessageDates();
 
-                if (latestStoredMessage != null) {
-                    final LocalDateTime timestamp = latestStoredMessage.getTimestamp();
-                    if (dates.anyMatch(date -> date.isBefore(timestamp))) {
-                        break;
+                    if (latestStoredMessage != null) {
+                        final LocalDateTime timestamp = latestStoredMessage.getTimestamp();
+                        if (dates.anyMatch(date -> date.isBefore(timestamp))) {
+                            break;
+                        }
                     }
                 }
-            }
-            while (!webController.isStartOfChat());
+                while (!webController.isStartOfChat());
 
-            int numMessagesOnScreen = webController.getNumMessages();
-            List<Message> messages = messageService.getUnsavedMessages(latestStoredMessage);
-            webController.setStatus(BrowserStatus.PROCESSING_MESSAGE);
-            processMessages(messages);
-            webController.setStatus(BrowserStatus.AWAITING_MESSAGE);
+                int numMessagesOnScreen = webController.getNumMessages();
+                List<Message> messages = messageService.getUnsavedMessages(latestStoredMessage);
+                webController.setStatus(BrowserStatus.PROCESSING_MESSAGE);
+                processMessages(messages);
+                webController.setStatus(BrowserStatus.AWAITING_MESSAGE);
 
-            if (numMessagesOnScreen > maxMessagesOnScreen) {
-                webController.restart();
-            } else {
-                webController.waitForMessagesToChange(numMessagesOnScreen);
+                if (numMessagesOnScreen > maxMessagesOnScreen) {
+                    webController.refresh(false);
+                } else {
+                    webController.waitForMessagesToChange(numMessagesOnScreen);
+                }
             }
+        } catch (WebDriverException e) {
+            log.info("Another thread has changed the system", e);
         }
     }
 

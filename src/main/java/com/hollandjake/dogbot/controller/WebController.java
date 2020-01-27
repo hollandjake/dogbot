@@ -23,28 +23,33 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.source.InvalidConfigurationPropertyValueException;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 
+import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 import static com.hollandjake.dogbot.util.CONSTANTS.MESSENGER_URL;
 import static com.hollandjake.dogbot.util.XPATHS.*;
+import static java.lang.Thread.sleep;
 
 @Slf4j
 @Controller
 public class WebController {
-    private final WebDriver driver;
-
     private final Environment env;
-    private final WebDriverWait wait;
-    private final WebDriverWait miniWait;
     private final HumanService humanService;
     private final Clipbot clipbot;
+
+    private WebDriver driver;
+    private WebDriverWait wait;
+    private WebDriverWait miniWait;
 
     @Getter
     @Setter
@@ -58,51 +63,18 @@ public class WebController {
     public WebController(Environment env, ThreadService threadService, HumanService humanService) {
         this.env = env;
         this.clipbot = new Clipbot(Toolkit.getDefaultToolkit().getSystemClipboard());
-        this.status = BrowserStatus.INIT_DRIVER;
         this.humanService = humanService;
         this.thread = threadService.findByUrl(env.getRequiredProperty("thread.name"));
-
-        String browser = env.getProperty("automation.browser", "chrome");
-        String driverPath = env.getProperty("driver.path");
-        switch (browser) {
-            case "chrome":
-                if (driverPath != null && !driverPath.isEmpty()) {
-                    System.setProperty("webdriver.chrome.driver", driverPath);
-                }
-                ChromeOptions chromeOptions = new ChromeOptions();
-                chromeOptions.addArguments(
-                        "--log-level=3",
-                        "--silent",
-                        "--lang=en-GB",
-                        "--mute-audio",
-                        "--disable-infobars",
-                        "--disable-notifications");
-                this.driver = new ChromeDriver(chromeOptions);
-                break;
-            case "firefox":
-                if (driverPath != null && !driverPath.isEmpty()) {
-                    System.setProperty("webdriver.gecko.driver", driverPath);
-                }
-                FirefoxOptions options = new FirefoxOptions();
-                FirefoxProfile profile = new FirefoxProfile();
-                profile.setPreference("app.update.enabled", false);
-                profile.setPreference("media.volume_scale", "0.0");
-                profile.setPreference("intl.accept_languages", "en_gb");
-                options.setLogLevel(FirefoxDriverLogLevel.FATAL);
-
-                options.setProfile(profile);
-                this.driver = new FirefoxDriver(options);
-                break;
-            default:
-                throw new InvalidConfigurationPropertyValueException("automation.browser",
-                        browser,
-                        "not supported type must be \"chrome\" or \"firefox\" defaults to \"chrome\"");
-        }
-
-        this.wait = new WebDriverWait(driver, 30L, 10);
-        this.miniWait = new WebDriverWait(driver, 5L, 10);
         Runtime.getRuntime().addShutdownHook(new java.lang.Thread(this::close));
-        this.status = BrowserStatus.INIT_DRIVER_COMPLETE;
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void refresh() throws InterruptedException {
+        log.info("Reloading window");
+        while (!BrowserStatus.AWAITING_MESSAGE.equals(status)) {
+            sleep(10);
+        }
+        refresh(true);
     }
 
     public void open() {
@@ -122,7 +94,15 @@ public class WebController {
                 .sendKeys(env.getRequiredProperty("messenger.password"));
 
         driver.findElement(By.xpath(LOGIN)).click();
-        wait.until(ExpectedConditions.urlToBe(MESSENGER_URL + thread.getUrl()));
+        wait.until(ExpectedConditions.or(
+                ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(LOGIN_ERROR)),
+                ExpectedConditions.urlToBe(MESSENGER_URL + thread.getUrl())
+        ));
+
+        if (!driver.findElements(By.xpath(LOGIN_ERROR)).isEmpty()) {
+            screenshot();
+            throw new WebDriverException("Facebook is preventing you from logging in");
+        }
         status = BrowserStatus.LOGGING_IN_COMPLETE;
     }
 
@@ -143,8 +123,10 @@ public class WebController {
     }
 
     public void close() {
-        if (!status.equals(BrowserStatus.CLOSED)) {
-            driver.quit();
+        if (!BrowserStatus.CLOSED.equals(status)) {
+            if (Objects.nonNull(driver)) {
+                driver.quit();
+            }
             status = BrowserStatus.CLOSED;
         }
     }
@@ -210,13 +192,64 @@ public class WebController {
     }
 
     public void scrollToMessage(Message message) {
-        if (message != null) {
+        if (message != null && Objects.nonNull(message.getWebElement())) {
             scrollToElement(message.getWebElement());
         }
     }
 
-    public void restart() {
-        if (status == BrowserStatus.INIT_DRIVER_COMPLETE) {
+    public void createDriver() {
+        close();
+        this.status = BrowserStatus.INIT_DRIVER;
+        String browser = env.getProperty("automation.browser", "chrome");
+        String driverPath = env.getProperty("driver.path");
+        switch (browser) {
+            case "chrome":
+                if (driverPath != null && !driverPath.isEmpty()) {
+                    System.setProperty("webdriver.chrome.driver", driverPath);
+                }
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments(
+                        "--log-level=3",
+                        "--silent",
+                        "--lang=en-GB",
+                        "--mute-audio",
+                        "--disable-infobars",
+                        "--disable-notifications");
+                this.driver = new ChromeDriver(chromeOptions);
+                break;
+            case "firefox":
+                if (driverPath != null && !driverPath.isEmpty()) {
+                    System.setProperty("webdriver.gecko.driver", driverPath);
+                }
+                FirefoxOptions options = new FirefoxOptions();
+                FirefoxProfile profile = new FirefoxProfile();
+                profile.setPreference("app.update.enabled", false);
+                profile.setPreference("media.volume_scale", "0.0");
+                profile.setPreference("intl.accept_languages", "en_gb");
+                options.setLogLevel(FirefoxDriverLogLevel.FATAL);
+
+                options.setProfile(profile);
+                this.driver = new FirefoxDriver(options);
+                break;
+            default:
+                throw new InvalidConfigurationPropertyValueException("automation.browser",
+                        browser,
+                        "not supported type must be \"chrome\" or \"firefox\" defaults to \"chrome\"");
+        }
+
+        this.wait = new WebDriverWait(driver, 30L, 10);
+        this.miniWait = new WebDriverWait(driver, 5L, 10);
+        this.status = BrowserStatus.INIT_DRIVER_COMPLETE;
+    }
+
+    @PostConstruct
+    public void initialise() {
+        refresh(true);
+    }
+
+    public void refresh(boolean hardRefresh) {
+        if (hardRefresh) {
+            createDriver();
             open();
             login();
             this.me = initMe();
@@ -235,10 +268,11 @@ public class WebController {
             File file = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             String destination = env.getProperty("screenshot.location");
             File target;
+            String datePart = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE);
             if (destination != null && destination.isEmpty()) {
-                target = File.createTempFile("screenshot", new Date().toString(), new File(destination));
+                target = File.createTempFile("screenshot-" + datePart, ".png", new File(destination));
             } else {
-                target = File.createTempFile("screenshot", new Date().toString());
+                target = File.createTempFile("screenshot-" + datePart, ".png");
             }
             FileCopyUtils.copy(file, target);
             log.info("Copied screenshot to {}", target);

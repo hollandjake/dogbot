@@ -11,6 +11,8 @@ public interface XPATHS {
     String LOGIN_PASS = "//input[@id='pass']";
     String LOGIN = "//button[@id='loginbutton']";
 
+    String LOGIN_ERROR = "//div[contains(text(),\"You can't use this feature at the moment\")]";
+
     String SETTING_COG = "//a[@aria-label='Settings, help and more']";
     String SETTINGS_DROPDOWN = "//span[text()='Settings']";
     String SETTINGS_DONE = "//button[text()='Done']";
