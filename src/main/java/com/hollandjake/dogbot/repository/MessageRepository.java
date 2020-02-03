@@ -99,11 +99,12 @@ public class MessageRepository implements DatabaseAccessor<Message> {
         ).stream().findAny().orElse(null);
     }
 
-    public Message getMessageLike(Thread thread, String query) {
+    public Message getMessageLike(Message commandMessage, String query) {
         return template.query(
-                "CALL GetMessageLike(?,?)",
+                "CALL GetMessageLike(?,?,?)",
                 getMapper(),
-                thread.getId(),
+                commandMessage.getThread().getId(),
+                commandMessage.getId(),
                 query).stream().findAny().orElse(null);
     }
 

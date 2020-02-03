@@ -97,7 +97,7 @@ public class Grab extends CommandableDatabaseModule {
     }
 
     private void locate(Message commandMessage, String query, boolean freshMessage, boolean moduleOutput) {
-        Message foundMessage = messageService.getMessageLike(query);
+        Message foundMessage = messageService.getMessageLike(commandMessage, query);
         if (foundMessage != null) {
             save(commandMessage, foundMessage, false, freshMessage, moduleOutput);
         } else {

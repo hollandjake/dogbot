@@ -175,8 +175,8 @@ public class MessageService {
         return messageRepository.getMapper();
     }
 
-    public Message getMessageLike(String query) {
-        return messageRepository.getMessageLike(getThread(), query);
+    public Message getMessageLike(Message commandMessage, String query) {
+        return messageRepository.getMessageLike(commandMessage, query);
     }
 
     public Integer getNumberOfMessages() {
