@@ -107,4 +107,16 @@ CREATE TABLE IF NOT EXISTS quote
     FOREIGN KEY (message_id) REFERENCES message (message_id)
 ) COLLATE = utf8mb4_bin;
 -- endregion
+-- region Deadlines
+CREATE TABLE IF NOT EXISTS events
+(
+    event_id  INT(10) UNSIGNED AUTO_INCREMENT NOT NULL,
+    thread_id INT(10) UNSIGNED                NOT NULL,
+    message   TEXT                            NOT NULL,
+    time      DATETIME                        NOT NULL,
+
+    PRIMARY KEY (event_id),
+    FOREIGN KEY (thread_id) REFERENCES message (thread_id)
+) COLLATE = utf8mb4_bin;
+-- endregion
 -- endregion

@@ -103,6 +103,7 @@ public class ModuleController {
         modules.put("Tab", new Tab(messageService));
         modules.put("Think", new Think(messageService));
         modules.put("XKCD", new XKCD(messageService));
+        modules.put("Events", new Events(messageService, template));
 
         //Extra commands
         modules.put("Feedback", new OneLinkCommand(
