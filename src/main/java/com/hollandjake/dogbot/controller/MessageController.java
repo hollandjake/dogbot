@@ -91,12 +91,12 @@ public class MessageController {
     private void processMessages(List<Message> newMessages) {
         if (!newMessages.isEmpty()) {
             newMessages.forEach(message -> {
-                webController.jiggle(message.getWebElement());
                 webController.highlightElement(message.getWebElement());
                 Message savedMessage = messageService.save(message);
                 moduleController.processMessage(savedMessage, isFresh(savedMessage));
                 numProcessedMessages++;
             });
+            webController.jiggle(newMessages.get(newMessages.size() - 1).getWebElement());
         }
     }
 
