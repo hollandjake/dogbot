@@ -26,6 +26,7 @@ public class MessageController {
     @Getter
     private final ChatbotApplication application;
     private final ModuleController moduleController;
+    private final NotificationController notificationController;
     @Value("${image.max-size:1MB}")
     public DataSize maxImageBytes;
     @Value("${messenger.max-messages:10000}")
@@ -38,12 +39,14 @@ public class MessageController {
             WebController webController,
             MessageService messageService,
             ChatbotApplication application,
-            ModuleController moduleController) {
+            ModuleController moduleController,
+            NotificationController notificationController) {
         java.lang.Thread.setDefaultUncaughtExceptionHandler((thread, e) -> application.errorHandler(this, e));
         this.webController = webController;
         this.messageService = messageService;
         this.application = application;
         this.moduleController = moduleController;
+        this.notificationController = notificationController;
         moduleController.onLoad();
     }
 

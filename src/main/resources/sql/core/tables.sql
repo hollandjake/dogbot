@@ -108,15 +108,39 @@ CREATE TABLE IF NOT EXISTS quote
 ) COLLATE = utf8mb4_bin;
 -- endregion
 -- region Deadlines
-CREATE TABLE IF NOT EXISTS events
+CREATE TABLE IF NOT EXISTS notification
+(
+    notification_id INT(10) UNSIGNED AUTO_INCREMENT NOT NULL,
+    thread_id       INT(10) UNSIGNED                NOT NULL,
+    message         TEXT                            NOT NULL,
+    time            DATETIME                        NOT NULL,
+    show_time       DATETIME                        NOT NULL,
+    sent            BOOLEAN                         NOT NULL DEFAULT FALSE,
+
+    PRIMARY KEY (notification_id),
+    FOREIGN KEY (thread_id) REFERENCES message (thread_id),
+    CONSTRAINT messageUniqueness UNIQUE (thread_id, message (10), time)
+) COLLATE = utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS event
 (
     event_id  INT(10) UNSIGNED AUTO_INCREMENT NOT NULL,
     thread_id INT(10) UNSIGNED                NOT NULL,
-    message   TEXT                            NOT NULL,
     time      DATETIME                        NOT NULL,
+    message   TEXT                            NOT NULL,
 
     PRIMARY KEY (event_id),
     FOREIGN KEY (thread_id) REFERENCES message (thread_id)
+) COLLATE = utf8mb4_bin;
+
+CREATE TABLE IF NOT EXISTS event_notification
+(
+    event_id        INT(10) UNSIGNED NOT NULL,
+    notification_id INT(10) UNSIGNED NOT NULL,
+
+    PRIMARY KEY (event_id, notification_id),
+    FOREIGN KEY (event_id) REFERENCES event (event_id),
+    FOREIGN KEY (notification_id) REFERENCES notification (notification_id)
 ) COLLATE = utf8mb4_bin;
 -- endregion
 -- endregion

@@ -9,6 +9,7 @@ import com.hollandjake.dogbot.module.reddit.Birds;
 import com.hollandjake.dogbot.module.reddit.Cats;
 import com.hollandjake.dogbot.module.reddit.Dogs;
 import com.hollandjake.dogbot.service.MessageService;
+import com.hollandjake.dogbot.service.NotificationService;
 import com.hollandjake.dogbot.util.exceptions.MalformedCommandException;
 import com.hollandjake.dogbot.util.module.CommandableModule;
 import lombok.Getter;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 @Service
 public class ModuleController {
     private final MessageService messageService;
+    private final NotificationService notificationService;
     @Getter
     private final HashMap<String, CommandableModule> modules = new HashMap<>();
 
@@ -39,9 +41,11 @@ public class ModuleController {
     public Boolean moduleOutput;
 
     public ModuleController(MessageService messageService,
+                            NotificationService notificationService,
                             JdbcTemplate template,
                             Boot boot) {
         this.messageService = messageService;
+        this.notificationService = notificationService;
         this.template = template;
         this.boot = boot;
     }
@@ -103,7 +107,7 @@ public class ModuleController {
         modules.put("Tab", new Tab(messageService));
         modules.put("Think", new Think(messageService));
         modules.put("XKCD", new XKCD(messageService));
-        modules.put("Events", new Events(messageService, template));
+        modules.put("Events", new Notifications(messageService, notificationService, template));
 
         //Extra commands
         modules.put("Feedback", new OneLinkCommand(
