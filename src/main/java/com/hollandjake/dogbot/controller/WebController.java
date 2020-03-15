@@ -264,7 +264,7 @@ public class WebController {
         status = BrowserStatus.AWAITING_MESSAGE;
     }
 
-    public void screenshot() {
+    public File screenshot() {
         try {
             File file = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             String destination = env.getProperty("screenshot.location");
@@ -277,9 +277,11 @@ public class WebController {
             }
             FileCopyUtils.copy(file, target);
             log.info("Copied screenshot to {}", target);
+            return file;
         } catch (IOException e) {
             log.error("Failed to take screenshot", e);
         }
+        return null;
     }
 
     public void sendMessage(Message message) {

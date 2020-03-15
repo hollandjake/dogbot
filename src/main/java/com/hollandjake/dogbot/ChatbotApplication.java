@@ -1,5 +1,6 @@
 package com.hollandjake.dogbot;
 
+import com.hollandjake.dogbot.controller.MailController;
 import com.hollandjake.dogbot.controller.WebController;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,18 +29,20 @@ import java.time.LocalDateTime;
 public class ChatbotApplication {
     private final Environment env;
     private final WebController webController;
+    private final MailController mailController;
     @Getter
     private String version;
     @Getter
     private LocalDateTime startup;
 
     @Autowired
-    public ChatbotApplication(Environment env, WebController webController) {
+    public ChatbotApplication(Environment env, WebController webController, MailController mailController) {
         this.env = env;
         this.webController = webController;
+        this.mailController = mailController;
         setVersion();
         this.startup = LocalDateTime.now();
-        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> errorHandler(this, e));
+        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> errorHandler(e));
     }
 
     public static void main(String[] args) {
@@ -50,9 +53,8 @@ public class ChatbotApplication {
                 .run(args);
     }
 
-    public void errorHandler(Object sender, Throwable e) {
-        log.error("Unhandled Exception from {}", sender, e);
-        webController.screenshot();
+    public void errorHandler(Throwable e) {
+        mailController.send(e);
         webController.close();
     }
 

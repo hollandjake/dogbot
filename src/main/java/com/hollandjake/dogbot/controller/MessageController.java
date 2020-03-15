@@ -41,7 +41,7 @@ public class MessageController {
             ChatbotApplication application,
             ModuleController moduleController,
             NotificationController notificationController) {
-        java.lang.Thread.setDefaultUncaughtExceptionHandler((thread, e) -> application.errorHandler(this, e));
+        java.lang.Thread.setDefaultUncaughtExceptionHandler((thread, e) -> application.errorHandler(e));
         this.webController = webController;
         this.messageService = messageService;
         this.application = application;
@@ -52,7 +52,7 @@ public class MessageController {
 
     @Scheduled(fixedDelay = 1)
     public void checkForMessages() {
-        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> application.errorHandler(this, e));
+        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> application.errorHandler(e));
         log.debug("Checking for messages");
         try {
             while (webController.getStatus().equals(BrowserStatus.AWAITING_MESSAGE)) {
