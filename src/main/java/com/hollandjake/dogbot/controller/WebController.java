@@ -18,7 +18,6 @@ import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -292,13 +291,10 @@ public class WebController {
     }
 
     public void jiggle(WebElement webElement) {
-        try {
-            Actions actions = new Actions(driver);
-            actions.moveToElement(webElement).perform();
-            actions.moveToElement(driver.findElement(By.xpath(INPUT_BOX))).perform();
-        } catch (MoveTargetOutOfBoundsException e) {
-            log.error("Tried to move outside of bounds", e);
-        }
+        scrollToElement(webElement);
+        Actions actions = new Actions(driver);
+        actions.moveToElement(webElement).perform();
+        actions.moveToElement(driver.findElement(By.xpath(INPUT_BOX))).perform();
     }
 
     public void highlightElement(WebElement webElement) {
