@@ -7,12 +7,15 @@ import com.hollandjake.dogbot.repository.EventRepository;
 import com.hollandjake.dogbot.repository.NotificationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Slf4j
 @Service
+@CacheConfig(cacheNames = "notifications")
 public class NotificationService {
     private final MessageService messageService;
     private final NotificationRepository notificationRepository;
@@ -25,6 +28,7 @@ public class NotificationService {
         this.eventRepository = eventRepository;
     }
 
+    @Cacheable(key = "#thread.id")
     public List<Notification> getAllUnsentNotifications(Thread thread) {
         return notificationRepository.getAllUnsentNotifications(thread);
     }

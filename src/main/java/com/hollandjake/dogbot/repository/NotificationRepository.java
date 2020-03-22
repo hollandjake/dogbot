@@ -6,6 +6,9 @@ import com.hollandjake.dogbot.service.ThreadService;
 import com.hollandjake.dogbot.util.exceptions.FailedToSaveException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -15,6 +18,7 @@ import java.util.List;
 
 @Slf4j
 @Repository
+@CacheConfig(cacheNames = "notifications")
 public class NotificationRepository implements DatabaseAccessor<Notification> {
     private final ThreadService threadService;
     private final JdbcTemplate template;
@@ -27,6 +31,7 @@ public class NotificationRepository implements DatabaseAccessor<Notification> {
     }
 
     @Override
+    @CacheEvict(key = "#notification.thread.id")
     public Notification save(Notification notification) {
         List<Notification> query = template.query(
                 "CALL SaveNotification(?, ?, ?, ?, ?)",
@@ -53,6 +58,7 @@ public class NotificationRepository implements DatabaseAccessor<Notification> {
                         .build();
     }
 
+    @CachePut(key = "#thread.id")
     public List<Notification> getAllUnsentNotifications(Thread thread) {
         return template.query("SELECT notification_id, thread_id, message, time, show_time, sent " +
                         "FROM notification " +

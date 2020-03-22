@@ -109,4 +109,16 @@
             <heap>1000</heap>
         </resources>
     </cache>
+
+    <cache alias="notifications">
+        <key-type>java.lang.Integer</key-type>
+        <value-type>java.util.List</value-type>
+        <expiry>
+            <tti unit="hours">1</tti>
+        </expiry>
+
+        <resources>
+            <heap>1</heap>
+        </resources>
+    </cache>
 </config>
