@@ -1,10 +1,12 @@
 package com.hollandjake.dogbot.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 
@@ -24,5 +26,10 @@ public class EntityManagerFactoriesConfiguration {
         emf.setDataSource(dataSource);
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         return emf;
+    }
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
     }
 }

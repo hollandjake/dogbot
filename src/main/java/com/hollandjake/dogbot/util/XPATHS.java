@@ -50,7 +50,9 @@ public interface XPATHS {
     /**
      * RETURNS @aria-label
      */
-    String MESSAGE_TEXT = "./div/div[contains(@class,'_aok') and @aria-label]";
+    String MESSAGE_TEXT = "./div/div[contains(@class,'_aok')]";
+
+    String MESSAGE_TEXT_SUBCOMPONENTS = "span/*";
 
     //Other Messages
     /**

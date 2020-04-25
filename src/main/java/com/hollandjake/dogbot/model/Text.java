@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.hollandjake.dogbot.util.XPATHS.MESSAGE_TEXT;
+import static com.hollandjake.dogbot.util.XPATHS.MESSAGE_TEXT_SUBCOMPONENTS;
 import static org.apache.commons.lang.StringEscapeUtils.unescapeHtml;
 
 @Data
@@ -39,7 +40,16 @@ public class Text extends MessageComponent {
         Set<MessageComponent> messageComponents = new HashSet<>();
         List<WebElement> textComponents = messageElement.findElements(By.xpath(MESSAGE_TEXT));
         for (WebElement textComponent : textComponents) {
-            messageComponents.add(Text.builder().data(textComponent.getAttribute("aria-label")).build());
+            StringBuilder s = new StringBuilder();
+            List<WebElement> subComponents = textComponent.findElements(By.xpath(MESSAGE_TEXT_SUBCOMPONENTS));
+            if (!subComponents.isEmpty()) {
+                for (WebElement textSubcomponent : subComponents) {
+                    s.append(textSubcomponent.getText());
+                }
+            } else {
+                s.append(textComponent.getText());
+            }
+            messageComponents.add(Text.builder().data(s.toString()).build());
         }
         return messageComponents;
     }

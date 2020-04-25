@@ -10,6 +10,7 @@ import com.hollandjake.dogbot.module.reddit.Cats;
 import com.hollandjake.dogbot.module.reddit.Dogs;
 import com.hollandjake.dogbot.service.MessageService;
 import com.hollandjake.dogbot.service.NotificationService;
+import com.hollandjake.dogbot.service.RestService;
 import com.hollandjake.dogbot.util.exceptions.MalformedCommandException;
 import com.hollandjake.dogbot.util.module.CommandableModule;
 import lombok.Getter;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 public class ModuleController {
     private final MessageService messageService;
     private final NotificationService notificationService;
+    private final RestService restService;
     @Getter
     private final HashMap<String, CommandableModule> modules = new HashMap<>();
 
@@ -42,10 +44,11 @@ public class ModuleController {
 
     public ModuleController(MessageService messageService,
                             NotificationService notificationService,
-                            JdbcTemplate template,
+                            RestService restService, JdbcTemplate template,
                             Boot boot) {
         this.messageService = messageService;
         this.notificationService = notificationService;
+        this.restService = restService;
         this.template = template;
         this.boot = boot;
     }
@@ -124,5 +127,7 @@ public class ModuleController {
                 "https://trello.com/invite/b/9f49WSW0/5aeb3b9523a722573df5121d65bdad56/second-year-compsci",
                 false
         ));
+
+//        restService.videos();
     }
 }
